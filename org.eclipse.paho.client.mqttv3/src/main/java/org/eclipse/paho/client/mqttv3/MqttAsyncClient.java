@@ -27,8 +27,10 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocketFactory;
+
 import org.eclipse.paho.client.mqttv3.internal.ClientComms;
 import org.eclipse.paho.client.mqttv3.internal.ConnectActionListener;
 import org.eclipse.paho.client.mqttv3.internal.DisconnectedMessageBuffer;
@@ -38,14 +40,12 @@ import org.eclipse.paho.client.mqttv3.internal.NetworkModule;
 import org.eclipse.paho.client.mqttv3.internal.SSLNetworkModule;
 import org.eclipse.paho.client.mqttv3.internal.TCPNetworkModule;
 import org.eclipse.paho.client.mqttv3.internal.security.SSLSocketFactoryFactory;
-import org.eclipse.paho.client.mqttv3.internal.websocket.WebSocketSecureNetworkModule;
 import org.eclipse.paho.client.mqttv3.internal.websocket.WebSocketNetworkModule;
+import org.eclipse.paho.client.mqttv3.internal.websocket.WebSocketSecureNetworkModule;
 import org.eclipse.paho.client.mqttv3.internal.wire.MqttDisconnect;
 import org.eclipse.paho.client.mqttv3.internal.wire.MqttPublish;
 import org.eclipse.paho.client.mqttv3.internal.wire.MqttSubscribe;
 import org.eclipse.paho.client.mqttv3.internal.wire.MqttUnsubscribe;
-import org.eclipse.paho.client.mqttv3.logging.Logger;
-import org.eclipse.paho.client.mqttv3.logging.LoggerFactory;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 import org.eclipse.paho.client.mqttv3.util.Debug;
@@ -86,7 +86,8 @@ import org.eclipse.paho.client.mqttv3.util.Debug;
  */
 public class MqttAsyncClient implements IMqttAsyncClient { 
 	private static final String CLASS_NAME = MqttAsyncClient.class.getName();
-	private static final Logger log = LoggerFactory.getLogger(LoggerFactory.MQTT_CLIENT_MSG_CAT,CLASS_NAME);
+  // private static final Logger log =
+  // LoggerFactory.getLogger(LoggerFactory.MQTT_CLIENT_MSG_CAT,CLASS_NAME);
 
 	private static final String CLIENT_ID_PREFIX = "paho";
 	private static final long QUIESCE_TIMEOUT = 30000; // ms
@@ -359,7 +360,7 @@ public class MqttAsyncClient implements IMqttAsyncClient {
 	public MqttAsyncClient(String serverURI, String clientId, MqttClientPersistence persistence, MqttPingSender pingSender) throws MqttException {
 		final String methodName = "MqttAsyncClient";
 
-		log.setResourceName(clientId);
+    // log.setResourceName(clientId);
 
 		if (clientId == null) { //Support empty client Id, 3.1.1 standard
 			throw new IllegalArgumentException("Null clientId");
@@ -386,7 +387,8 @@ public class MqttAsyncClient implements IMqttAsyncClient {
 		}
 
 		// @TRACE 101=<init> ClientID={0} ServerURI={1} PersistenceType={2}
-		log.fine(CLASS_NAME,methodName,"101",new Object[]{clientId,serverURI,persistence});
+    // log.fine(CLASS_NAME,methodName,"101",new
+    // Object[]{clientId,serverURI,persistence});
 
 		this.persistence.open(clientId, serverURI);
 		this.comms = new ClientComms(this, this.persistence, pingSender);
@@ -418,7 +420,7 @@ public class MqttAsyncClient implements IMqttAsyncClient {
 	protected NetworkModule[] createNetworkModules(String address, MqttConnectOptions options) throws MqttException, MqttSecurityException {
 		final String methodName = "createNetworkModules";
 		// @TRACE 116=URI={0}
-		log.fine(CLASS_NAME, methodName, "116", new Object[]{address});
+//		log.fine(CLASS_NAME, methodName, "116", new Object[]{address});
 
 		NetworkModule[] networkModules = null;
 		String[] serverURIs = options.getServerURIs();
@@ -436,7 +438,7 @@ public class MqttAsyncClient implements IMqttAsyncClient {
 			networkModules[i] = createNetworkModule(array[i], options);
 		}
 
-		log.fine(CLASS_NAME, methodName, "108");
+//		log.fine(CLASS_NAME, methodName, "108");
 		return networkModules;
 	}
 
@@ -451,7 +453,7 @@ public class MqttAsyncClient implements IMqttAsyncClient {
 	private NetworkModule createNetworkModule(String address, MqttConnectOptions options) throws MqttException, MqttSecurityException {
 		final String methodName = "createNetworkModule";
 		// @TRACE 115=URI={0}
-		log.fine(CLASS_NAME,methodName, "115", new Object[] {address});
+//		log.fine(CLASS_NAME,methodName, "115", new Object[] {address});
 
 		NetworkModule netModule;
 		SocketFactory factory = options.getSocketFactory();
@@ -561,7 +563,7 @@ public class MqttAsyncClient implements IMqttAsyncClient {
 			break;
 		default:
 			// This shouldn't happen, as long as validateURI() has been called.
-			log.fine(CLASS_NAME,methodName, "119", new Object[] {address});
+//			log.fine(CLASS_NAME,methodName, "119", new Object[] {address});
 			netModule = null;
 		}
 		return netModule;
@@ -615,16 +617,16 @@ public class MqttAsyncClient implements IMqttAsyncClient {
 		final boolean automaticReconnect = options.isAutomaticReconnect();
 
 		// @TRACE 103=cleanSession={0} connectionTimeout={1} TimekeepAlive={2} userName={3} password={4} will={5} userContext={6} callback={7}
-		log.fine(CLASS_NAME,methodName, "103",
-				new Object[]{
-				Boolean.valueOf(options.isCleanSession()),
-				new Integer(options.getConnectionTimeout()),
-				new Integer(options.getKeepAliveInterval()),
-				options.getUserName(),
-				((null == options.getPassword())?"[null]":"[notnull]"),
-				((null == options.getWillMessage())?"[null]":"[notnull]"),
-				userContext,
-				callback });
+//		log.fine(CLASS_NAME,methodName, "103",
+    // new Object[]{
+    // Boolean.valueOf(options.isCleanSession()),
+    // new Integer(options.getConnectionTimeout()),
+    // new Integer(options.getKeepAliveInterval()),
+    // options.getUserName(),
+    // ((null == options.getPassword())?"[null]":"[notnull]"),
+    // ((null == options.getWillMessage())?"[null]":"[notnull]"),
+    // userContext,
+    // callback });
 		comms.setNetworkModules(createNetworkModules(serverURI, options));
 		comms.setReconnectCallback(new MqttCallbackExtended() {
 			
@@ -692,7 +694,8 @@ public class MqttAsyncClient implements IMqttAsyncClient {
 	public IMqttToken disconnect(long quiesceTimeout, Object userContext, IMqttActionListener callback) throws MqttException {
 		final String methodName = "disconnect";
 		// @TRACE 104=> quiesceTimeout={0} userContext={1} callback={2}
-		log.fine(CLASS_NAME,methodName, "104",new Object[]{ new Long(quiesceTimeout), userContext, callback});
+    // log.fine(CLASS_NAME,methodName, "104",new Object[]{ new
+    // Long(quiesceTimeout), userContext, callback});
 
 		MqttToken token = new MqttToken(getClientId());
 		token.setActionCallback(callback);
@@ -703,11 +706,11 @@ public class MqttAsyncClient implements IMqttAsyncClient {
 			comms.disconnect(disconnect, quiesceTimeout, token);
 		} catch (MqttException ex) {
 			//@TRACE 105=< exception
-			log.fine(CLASS_NAME,methodName,"105",null,ex);
+      // log.fine(CLASS_NAME,methodName,"105",null,ex);
 			throw ex;
 		}
 		//@TRACE 108=<
-		log.fine(CLASS_NAME,methodName,"108");
+    // log.fine(CLASS_NAME,methodName,"108");
 
 		return token;
 	}
@@ -852,11 +855,11 @@ public class MqttAsyncClient implements IMqttAsyncClient {
 		final String methodName = "ping";
 		MqttToken token;
 		//@TRACE 117=>
-		log.fine(CLASS_NAME,methodName,"117");
+    // log.fine(CLASS_NAME,methodName,"117");
 		
 		token = comms.checkForActivity();
 		//@TRACE 118=<
-		log.fine(CLASS_NAME,methodName,"118");
+    // log.fine(CLASS_NAME,methodName,"118");
 		
 		return token;
 	}
@@ -898,20 +901,22 @@ public class MqttAsyncClient implements IMqttAsyncClient {
 		}
 		
 		// Only Generate Log string if we are logging at FINE level
-		if(log.isLoggable(Logger.FINE)){
-			StringBuffer subs = new StringBuffer();
-			for (int i=0;i<topicFilters.length;i++) {
-				if (i>0) {
-					subs.append(", ");
-				}
-				subs.append("topic=").append(topicFilters[i]).append(" qos=").append(qos[i]);
-				
-				//Check if the topic filter is valid before subscribing
-				MqttTopic.validate(topicFilters[i], true/*allow wildcards*/);
-			}
-			//@TRACE 106=Subscribe topicFilter={0} userContext={1} callback={2}
-			log.fine(CLASS_NAME,methodName,"106",new Object[]{subs.toString(), userContext, callback});
-		}
+    // if(log.isLoggable(Logger.FINE)){
+    // StringBuffer subs = new StringBuffer();
+    // for (int i=0;i<topicFilters.length;i++) {
+    // if (i>0) {
+    // subs.append(", ");
+    // }
+    // subs.append("topic=").append(topicFilters[i]).append("
+    // qos=").append(qos[i]);
+    //
+    // //Check if the topic filter is valid before subscribing
+    // MqttTopic.validate(topicFilters[i], true/*allow wildcards*/);
+    // }
+    // //@TRACE 106=Subscribe topicFilter={0} userContext={1} callback={2}
+    // log.fine(CLASS_NAME,methodName,"106",new Object[]{subs.toString(),
+    // userContext, callback});
+    // }
 
 		MqttToken token = new MqttToken(getClientId());
 		token.setActionCallback(callback);
@@ -922,7 +927,7 @@ public class MqttAsyncClient implements IMqttAsyncClient {
 
 		comms.sendNoWait(register, token);
 		//@TRACE 109=<
-		log.fine(CLASS_NAME,methodName,"109");
+    // log.fine(CLASS_NAME,methodName,"109");
 
 		return token;
 	}
@@ -993,18 +998,19 @@ public class MqttAsyncClient implements IMqttAsyncClient {
 		final String methodName = "unsubscribe";
 		
 		// Only Generate Log string if we are logging at FINE level
-		if(log.isLoggable(Logger.FINE)){
-			String subs = "";
-			for (int i=0;i<topicFilters.length;i++) {
-				if (i>0) {
-					subs+=", ";
-				}
-				subs+=topicFilters[i];
-			}
-			
-			//@TRACE 107=Unsubscribe topic={0} userContext={1} callback={2}
-			log.fine(CLASS_NAME, methodName,"107",new Object[]{subs, userContext, callback});
-		}
+    // if(log.isLoggable(Logger.FINE)){
+    // String subs = "";
+    // for (int i=0;i<topicFilters.length;i++) {
+    // if (i>0) {
+    // subs+=", ";
+    // }
+    // subs+=topicFilters[i];
+    // }
+    //
+    // //@TRACE 107=Unsubscribe topic={0} userContext={1} callback={2}
+    // log.fine(CLASS_NAME, methodName,"107",new Object[]{subs, userContext,
+    // callback});
+    // }
 		
 		for (int i=0;i<topicFilters.length;i++) {			
 			// Check if the topic filter is valid before unsubscribing
@@ -1030,7 +1036,7 @@ public class MqttAsyncClient implements IMqttAsyncClient {
 
 		comms.sendNoWait(unregister, token);
 		//@TRACE 110=<
-		log.fine(CLASS_NAME,methodName,"110");
+    // log.fine(CLASS_NAME,methodName,"110");
 
 		return token;
 	}
@@ -1111,7 +1117,8 @@ public class MqttAsyncClient implements IMqttAsyncClient {
 			MqttPersistenceException {
 		final String methodName = "publish";
 		//@TRACE 111=< topic={0} message={1}userContext={1} callback={2}
-		log.fine(CLASS_NAME,methodName,"111", new Object[] {topic, userContext, callback});
+    // log.fine(CLASS_NAME,methodName,"111", new Object[] {topic, userContext,
+    // callback});
 
 		//Checks if a topic is valid when publishing a message.
 		MqttTopic.validate(topic, false/*wildcards NOT allowed*/);
@@ -1126,7 +1133,7 @@ public class MqttAsyncClient implements IMqttAsyncClient {
 		comms.sendNoWait(pubMsg, token);
 
 		//@TRACE 112=<
-		log.fine(CLASS_NAME,methodName,"112");
+    // log.fine(CLASS_NAME,methodName,"112");
 
 		return token;
 	}
@@ -1138,7 +1145,7 @@ public class MqttAsyncClient implements IMqttAsyncClient {
 	public void reconnect() throws MqttException {
 		final String methodName = "reconnect";
 		//@Trace 500=Attempting to reconnect client: {0}
-		log.fine(CLASS_NAME, methodName, "500", new Object[]{this.clientId});
+    // log.fine(CLASS_NAME, methodName, "500", new Object[]{this.clientId});
 		// Some checks to make sure that we're not attempting to reconnect an already connected client
 		if (comms.isConnected()) {
 			throw ExceptionHelper.createMqttException(MqttException.REASON_CODE_CLIENT_CONNECTED);
@@ -1172,20 +1179,22 @@ public class MqttAsyncClient implements IMqttAsyncClient {
 	private void attemptReconnect(){
 		final String methodName = "attemptReconnect";	
 		//@Trace 500=Attempting to reconnect client: {0}
-		log.fine(CLASS_NAME, methodName, "500", new Object[]{this.clientId});
+    // log.fine(CLASS_NAME, methodName, "500", new Object[]{this.clientId});
 		try {
 			connect(this.connOpts, this.userContext,new IMqttActionListener() {
 				
 				public void onSuccess(IMqttToken asyncActionToken) {
 					//@Trace 501=Automatic Reconnect Successful: {0}
-					log.fine(CLASS_NAME, methodName, "501", new Object[]{asyncActionToken.getClient().getClientId()});
+          // log.fine(CLASS_NAME, methodName, "501", new
+          // Object[]{asyncActionToken.getClient().getClientId()});
 					comms.setRestingState(false);
 					stopReconnectCycle();
 				}
 				
 				public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
 					//@Trace 502=Automatic Reconnect failed, rescheduling: {0}
-					log.fine(CLASS_NAME, methodName, "502", new Object[]{asyncActionToken.getClient().getClientId()});
+          // log.fine(CLASS_NAME, methodName, "502", new
+          // Object[]{asyncActionToken.getClient().getClientId()});
 					if(reconnectDelay < 128000){
 						reconnectDelay = reconnectDelay * 2;
 					}
@@ -1194,10 +1203,10 @@ public class MqttAsyncClient implements IMqttAsyncClient {
 			});
 		} catch (MqttSecurityException ex) {
 			//@TRACE 804=exception
-			log.fine(CLASS_NAME,methodName,"804",null, ex);
+      // log.fine(CLASS_NAME,methodName,"804",null, ex);
 		} catch (MqttException ex) {
 			//@TRACE 804=exception
-			log.fine(CLASS_NAME,methodName,"804",null, ex);
+      // log.fine(CLASS_NAME,methodName,"804",null, ex);
 		}
 	}
 
@@ -1207,7 +1216,8 @@ public class MqttAsyncClient implements IMqttAsyncClient {
 	private void startReconnectCycle(){
 		String methodName = "startReconnectCycle";
 		//@Trace 503=Start reconnect timer for client: {0}, delay: {1}
-		log.fine(CLASS_NAME, methodName, "503", new Object[]{this.clientId, new Long(reconnectDelay)});
+    // log.fine(CLASS_NAME, methodName, "503", new Object[]{this.clientId, new
+    // Long(reconnectDelay)});
 		//reconnectTimer = new Timer("MQTT Reconnect: " + clientId); // Cannot use for Java 1.4.2
 		reconnectTimer = new Timer();
 		reconnectTimer.schedule(new ReconnectTask(), reconnectDelay);
@@ -1216,7 +1226,7 @@ public class MqttAsyncClient implements IMqttAsyncClient {
 	private void stopReconnectCycle(){
 		String methodName = "stopReconnectCycle";
 		//@Trace 504=Stop reconnect timer for client: {0}
-		log.fine(CLASS_NAME, methodName, "504", new Object[]{this.clientId});
+    // log.fine(CLASS_NAME, methodName, "504", new Object[]{this.clientId});
 		synchronized(clientLock) {
 			if (this.connOpts.isAutomaticReconnect()) {
 				if(reconnectTimer != null){
@@ -1231,7 +1241,8 @@ public class MqttAsyncClient implements IMqttAsyncClient {
 	private void rescheduleReconnectCycle(int delay){
 		String methodName = "rescheduleReconnectCycle";
 		//@Trace 505=Rescheduling reconnect timer for client: {0}, delay: {1}
-		log.fine(CLASS_NAME, methodName, "505", new Object[]{this.clientId, new Long(reconnectDelay)});
+    // log.fine(CLASS_NAME, methodName, "505", new Object[]{this.clientId, new
+    // Long(reconnectDelay)});
 		synchronized(clientLock) {
 			if(this.connOpts.isAutomaticReconnect()) {
 				if (reconnectTimer != null) {
@@ -1249,7 +1260,7 @@ public class MqttAsyncClient implements IMqttAsyncClient {
 		private static final String methodName = "ReconnectTask.run";
 		public void run() {
 			//@Trace 506=Triggering Automatic Reconnect attempt.
-			log.fine(CLASS_NAME, methodName, "506");
+      // log.fine(CLASS_NAME, methodName, "506");
 			attemptReconnect();
 		}
 	}
@@ -1298,10 +1309,10 @@ public class MqttAsyncClient implements IMqttAsyncClient {
 	public void close() throws MqttException {
 		final String methodName = "close";
 		//@TRACE 113=<
-		log.fine(CLASS_NAME,methodName,"113");
+    // log.fine(CLASS_NAME,methodName,"113");
 		comms.close();
 		//@TRACE 114=>
-		log.fine(CLASS_NAME,methodName,"114");
+    // log.fine(CLASS_NAME,methodName,"114");
 
 	}
 

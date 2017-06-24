@@ -45,10 +45,7 @@ import org.eclipse.paho.client.mqttv3.internal.wire.MqttPubComp;
 import org.eclipse.paho.client.mqttv3.internal.wire.MqttPubRec;
 import org.eclipse.paho.client.mqttv3.internal.wire.MqttPubRel;
 import org.eclipse.paho.client.mqttv3.internal.wire.MqttPublish;
-import org.eclipse.paho.client.mqttv3.internal.wire.MqttSuback;
 import org.eclipse.paho.client.mqttv3.internal.wire.MqttWireMessage;
-import org.eclipse.paho.client.mqttv3.logging.Logger;
-import org.eclipse.paho.client.mqttv3.logging.LoggerFactory;
 
 /**
  * The core of the client, which holds the state information for pending and
@@ -96,7 +93,8 @@ import org.eclipse.paho.client.mqttv3.logging.LoggerFactory;
  */
 public class ClientState {
 	private static final String CLASS_NAME = ClientState.class.getName();
-	private static final Logger log = LoggerFactory.getLogger(LoggerFactory.MQTT_CLIENT_MSG_CAT,CLASS_NAME);
+  // private static final Logger log =
+  // LoggerFactory.getLogger(LoggerFactory.MQTT_CLIENT_MSG_CAT,CLASS_NAME);
 	private static final String PERSISTENCE_SENT_PREFIX = "s-";
 	private static final String PERSISTENCE_SENT_BUFFERED_PREFIX = "sb-";
 	private static final String PERSISTENCE_CONFIRMED_PREFIX = "sc-";
@@ -144,8 +142,8 @@ public class ClientState {
 	protected ClientState(MqttClientPersistence persistence, CommsTokenStore tokenStore, 
 			CommsCallback callback, ClientComms clientComms, MqttPingSender pingSender) throws MqttException {
 		
-		log.setResourceName(clientComms.getClient().getClientId());
-		log.finer(CLASS_NAME, "<Init>", "" );
+    // log.setResourceName(clientComms.getClient().getClientId());
+    // log.finer(CLASS_NAME, "<Init>", "" );
 
 		inUseMsgIds = new Hashtable();
 		pendingFlows = new Vector();
@@ -206,7 +204,7 @@ public class ClientState {
 	protected void clearState() throws MqttException {
 		final String methodName = "clearState";
 		//@TRACE 603=clearState
-		log.fine(CLASS_NAME, methodName,">");
+    // log.fine(CLASS_NAME, methodName,">");
 
 		persistence.clear();
 		inUseMsgIds.clear();
@@ -228,7 +226,7 @@ public class ClientState {
 		}
 		catch (MqttException ex) {
 			//@TRACE 602=key={0} exception
-			log.fine(CLASS_NAME, methodName, "602", new Object[] {key}, ex);
+      // log.fine(CLASS_NAME, methodName, "602", new Object[] {key}, ex);
 			if (ex.getCause() instanceof EOFException) {
 				// Premature end-of-file means that the message is corrupted
 				if (key != null) {
@@ -240,7 +238,7 @@ public class ClientState {
 			}
 		}
 		//@TRACE 601=key={0} message={1}
-		log.fine(CLASS_NAME, methodName, "601", new Object[]{key,message});
+    // log.fine(CLASS_NAME, methodName, "601", new Object[]{key,message});
 		return message;
 	}
 
@@ -321,7 +319,7 @@ public class ClientState {
 		int highestMsgId = nextMsgId;
 		Vector orphanedPubRels = new Vector();
 		//@TRACE 600=>
-		log.fine(CLASS_NAME, methodName, "600");
+    // log.fine(CLASS_NAME, methodName, "600");
 		
 		while (messageKeys.hasMoreElements()) {
 			key = (String) messageKeys.nextElement();
@@ -330,7 +328,7 @@ public class ClientState {
 			if (message != null) {
 				if (key.startsWith(PERSISTENCE_RECEIVED_PREFIX)) {
 					//@TRACE 604=inbound QoS 2 publish key={0} message={1}
-					log.fine(CLASS_NAME,methodName,"604", new Object[]{key,message});
+          // log.fine(CLASS_NAME,methodName,"604", new Object[]{key,message});
 
 					// The inbound messages that we have persisted will be QoS 2 
 					inboundQoS2.put(new Integer(message.getMessageId()),message);
@@ -346,12 +344,14 @@ public class ClientState {
 						if (confirmMessage != null) {
 							// confirmMessage.setDuplicate(true); // REMOVED
 							//@TRACE 605=outbound QoS 2 pubrel key={0} message={1}
-							log.fine(CLASS_NAME,methodName, "605", new Object[]{key,message});
+              // log.fine(CLASS_NAME,methodName, "605", new
+              // Object[]{key,message});
 
 							outboundQoS2.put(new Integer(confirmMessage.getMessageId()), confirmMessage);
 						} else {
 							//@TRACE 606=outbound QoS 2 completed key={0} message={1}
-							log.fine(CLASS_NAME,methodName, "606", new Object[]{key,message});
+              // log.fine(CLASS_NAME,methodName, "606", new
+              // Object[]{key,message});
 						}
 					} else {
 						// QoS 1 or 2, with no CONFIRM sent...
@@ -359,12 +359,14 @@ public class ClientState {
 						sendMessage.setDuplicate(true);
 						if (sendMessage.getMessage().getQos() == 2) {
 							//@TRACE 607=outbound QoS 2 publish key={0} message={1}
-							log.fine(CLASS_NAME,methodName, "607", new Object[]{key,message});
+              // log.fine(CLASS_NAME,methodName, "607", new
+              // Object[]{key,message});
 							
 							outboundQoS2.put(new Integer(sendMessage.getMessageId()),sendMessage);
 						} else {
 							//@TRACE 608=outbound QoS 1 publish key={0} message={1}
-							log.fine(CLASS_NAME,methodName, "608", new Object[]{key,message});
+              // log.fine(CLASS_NAME,methodName, "608", new
+              // Object[]{key,message});
 
 							outboundQoS1.put(new Integer(sendMessage.getMessageId()),sendMessage);
 						}
@@ -379,17 +381,20 @@ public class ClientState {
 					highestMsgId = Math.max(sendMessage.getMessageId(), highestMsgId);
 					if(sendMessage.getMessage().getQos() == 2){
 						//@TRACE 607=outbound QoS 2 publish key={0} message={1}
-						log.fine(CLASS_NAME,methodName, "607", new Object[]{key,message});
+            // log.fine(CLASS_NAME,methodName, "607", new
+            // Object[]{key,message});
 						outboundQoS2.put(new Integer(sendMessage.getMessageId()),sendMessage);
 					} else if(sendMessage.getMessage().getQos() == 1){
 						//@TRACE 608=outbound QoS 1 publish key={0} message={1}
-						log.fine(CLASS_NAME,methodName, "608", new Object[]{key,message});
+            // log.fine(CLASS_NAME,methodName, "608", new
+            // Object[]{key,message});
 
 						outboundQoS1.put(new Integer(sendMessage.getMessageId()),sendMessage);
 						
 					} else {
 						//@TRACE 511=outbound QoS 0 publish key={0} message={1}
-						log.fine(CLASS_NAME,methodName, "511", new Object[]{key,message});
+            // log.fine(CLASS_NAME,methodName, "511", new
+            // Object[]{key,message});
 						outboundQoS0.put(new Integer(sendMessage.getMessageId()), sendMessage);
 						// Because there is no Puback, we have to trust that this is enough to send the message
 						persistence.remove(key);
@@ -414,7 +419,7 @@ public class ClientState {
 		while(messageKeys.hasMoreElements()) {
 			key = (String) messageKeys.nextElement();
 			//@TRACE 609=removing orphaned pubrel key={0}
-			log.fine(CLASS_NAME,methodName, "609", new Object[]{key});
+      // log.fine(CLASS_NAME,methodName, "609", new Object[]{key});
 
 			persistence.remove(key);
 		}
@@ -433,13 +438,13 @@ public class ClientState {
 			MqttWireMessage msg = (MqttWireMessage) outboundQoS2.get(key);
 			if (msg instanceof MqttPublish) {
 				//@TRACE 610=QoS 2 publish key={0}
-				log.fine(CLASS_NAME,methodName, "610", new Object[]{key});
+        // log.fine(CLASS_NAME,methodName, "610", new Object[]{key});
                 // set DUP flag only for PUBLISH, but NOT for PUBREL (spec 3.1.1)
 				msg.setDuplicate(true);  
 				insertInOrder(pendingMessages, (MqttPublish)msg);
 			} else if (msg instanceof MqttPubRel) {
 				//@TRACE 611=QoS 2 pubrel key={0}
-				log.fine(CLASS_NAME,methodName, "611", new Object[]{key});
+        // log.fine(CLASS_NAME,methodName, "611", new Object[]{key});
 
 				insertInOrder(pendingFlows, (MqttPubRel)msg);
 			}
@@ -450,7 +455,7 @@ public class ClientState {
 			MqttPublish msg = (MqttPublish)outboundQoS1.get(key);
 			msg.setDuplicate(true);
 			//@TRACE 612=QoS 1 publish key={0}
-			log.fine(CLASS_NAME,methodName, "612", new Object[]{key});
+      // log.fine(CLASS_NAME,methodName, "612", new Object[]{key});
 
 			insertInOrder(pendingMessages, msg);
 		}
@@ -459,7 +464,7 @@ public class ClientState {
 			Object key = keys.nextElement();
 			MqttPublish msg = (MqttPublish)outboundQoS0.get(key);
 			//@TRACE 512=QoS 0 publish key={0}
-			log.fine(CLASS_NAME,methodName, "512", new Object[]{key});
+      // log.fine(CLASS_NAME,methodName, "512", new Object[]{key});
 			insertInOrder(pendingMessages, msg);
 			
 		}
@@ -493,14 +498,17 @@ public class ClientState {
 			synchronized (queueLock) {
 				if (actualInFlight >= this.maxInflight) {
 					//@TRACE 613= sending {0} msgs at max inflight window
-					log.fine(CLASS_NAME, methodName, "613", new Object[]{new Integer(actualInFlight)});
+          // log.fine(CLASS_NAME, methodName, "613", new Object[]{new
+          // Integer(actualInFlight)});
 
 					throw new MqttException(MqttException.REASON_CODE_MAX_INFLIGHT);
 				}
 				
 				MqttMessage innerMessage = ((MqttPublish) message).getMessage();
 				//@TRACE 628=pending publish key={0} qos={1} message={2}
-				log.fine(CLASS_NAME,methodName,"628", new Object[]{new Integer(message.getMessageId()), new Integer(innerMessage.getQos()), message});
+        // log.fine(CLASS_NAME,methodName,"628", new Object[]{new
+        // Integer(message.getMessageId()), new Integer(innerMessage.getQos()),
+        // message});
 
 				switch(innerMessage.getQos()) {
 					case 2:
@@ -518,7 +526,8 @@ public class ClientState {
 			}
 		} else {
 			//@TRACE 615=pending send key={0} message {1}
-			log.fine(CLASS_NAME,methodName,"615", new Object[]{new Integer(message.getMessageId()), message});
+      // log.fine(CLASS_NAME,methodName,"615", new Object[]{new
+      // Integer(message.getMessageId()), message});
 			
 			if (message instanceof MqttConnect) {
 				synchronized (queueLock) {
@@ -568,15 +577,15 @@ public class ClientState {
 				persistence.put(key, (MqttPublish) message);
 			} catch (MqttPersistenceException mpe){
 				//@TRACE 515=Could not Persist, attempting to Re-Open Persistence Store
-				log.fine(CLASS_NAME,methodName, "515");
+        // log.fine(CLASS_NAME,methodName, "515");
 				persistence.open(this.clientComms.getClient().getClientId(), this.clientComms.getClient().getServerURI());
 				persistence.put(key, (MqttPublish) message);
 			}
 			//@TRACE 513=Persisted Buffered Message key={0}
-			log.fine(CLASS_NAME,methodName, "513", new Object[]{key});
+      // log.fine(CLASS_NAME,methodName, "513", new Object[]{key});
 		} catch (MqttException ex){
 			//@TRACE 514=Failed to persist buffered message key={0}
-			log.warning(CLASS_NAME,methodName, "513", new Object[]{key});
+      // log.warning(CLASS_NAME,methodName, "513", new Object[]{key});
 		} 
 	}
 	
@@ -587,11 +596,11 @@ public class ClientState {
 		final String methodName = "unPersistBufferedMessage";
 		try{
 			//@TRACE 517=Un-Persisting Buffered message key={0}
-			log.fine(CLASS_NAME,methodName, "517", new Object[]{message.getKey()});
+      // log.fine(CLASS_NAME,methodName, "517", new Object[]{message.getKey()});
 			persistence.remove(getSendBufferedPersistenceKey(message));
 		} catch (MqttPersistenceException mpe){
 			//@TRACE 518=Failed to Un-Persist Buffered message key={0}
-			log.fine(CLASS_NAME,methodName, "518", new Object[]{message.getKey()});
+      // log.fine(CLASS_NAME,methodName, "518", new Object[]{message.getKey()});
 		}
 		
 	}
@@ -605,7 +614,9 @@ public class ClientState {
 		final String methodName = "undo";
 		synchronized (queueLock) {
 			//@TRACE 618=key={0} QoS={1} 
-			log.fine(CLASS_NAME,methodName,"618", new Object[]{new Integer(message.getMessageId()), new Integer(message.getMessage().getQos())});
+      // log.fine(CLASS_NAME,methodName,"618", new Object[]{new
+      // Integer(message.getMessageId()), new
+      // Integer(message.getMessage().getQos())});
 			
 			if (message.getMessage().getQos() == 1) {
 				outboundQoS1.remove(new Integer(message.getMessageId()));
@@ -644,7 +655,7 @@ public class ClientState {
 	public MqttToken checkForActivity(IMqttActionListener pingCallback) throws MqttException {
 		final String methodName = "checkForActivity";
 		//@TRACE 616=checkForActivity entered
-		log.fine(CLASS_NAME,methodName,"616", new Object[]{});
+    // log.fine(CLASS_NAME,methodName,"616", new Object[]{});
 		
         synchronized (quiesceLock) {
             // ref bug: https://bugs.eclipse.org/bugs/show_bug.cgi?id=440698
@@ -672,7 +683,9 @@ public class ClientState {
                     // Add a delta, since the timer and System.currentTimeMillis() is not accurate.                                                                                                                        
                 	// A ping is outstanding but no packet has been received in KA so connection is deemed broken                                                                                                         
                     //@TRACE 619=Timed out as no activity, keepAlive={0} lastOutboundActivity={1} lastInboundActivity={2} time={3} lastPing={4}                                                                           
-                    log.severe(CLASS_NAME,methodName,"619", new Object[]{new Long(this.keepAlive),new Long(lastOutboundActivity),new Long(lastInboundActivity), new Long(time), new Long(lastPing)});
+          // log.severe(CLASS_NAME,methodName,"619", new Object[]{new
+          // Long(this.keepAlive),new Long(lastOutboundActivity),new
+          // Long(lastInboundActivity), new Long(time), new Long(lastPing)});
 
                     // A ping has already been sent. At this point, assume that the                                                                                                                                       
                     // broker has hung and the TCP layer hasn't noticed.                                                                                                                                                  
@@ -683,7 +696,9 @@ public class ClientState {
                 if (pingOutstanding == 0 && (time - lastOutboundActivity >= 2*keepAlive)) {
                     
                     // I am probably blocked on a write operations as I should have been able to write at least a ping message                                                                                                    
-                	log.severe(CLASS_NAME,methodName,"642", new Object[]{new Long(this.keepAlive),new Long(lastOutboundActivity),new Long(lastInboundActivity), new Long(time), new Long(lastPing)});
+          // log.severe(CLASS_NAME,methodName,"642", new Object[]{new
+          // Long(this.keepAlive),new Long(lastOutboundActivity),new
+          // Long(lastInboundActivity), new Long(time), new Long(lastPing)});
 
                     // A ping has not been sent but I am not progressing on the current write operation. 
                 	// At this point, assume that the broker has hung and the TCP layer hasn't noticed.                                                                                                                                                  
@@ -703,7 +718,9 @@ public class ClientState {
                     (time - lastOutboundActivity >= keepAlive - delta)) {
 
                     //@TRACE 620=ping needed. keepAlive={0} lastOutboundActivity={1} lastInboundActivity={2}                                                                                                              
-                    log.fine(CLASS_NAME,methodName,"620", new Object[]{new Long(this.keepAlive),new Long(lastOutboundActivity),new Long(lastInboundActivity)});
+          // log.fine(CLASS_NAME,methodName,"620", new Object[]{new
+          // Long(this.keepAlive),new Long(lastOutboundActivity),new
+          // Long(lastInboundActivity)});
 
                     // pingOutstanding++;  // it will be set after the ping has been written on the wire                                                                                                             
                     // lastPing = time;    // it will be set after the ping has been written on the wire                                                                                                             
@@ -720,12 +737,13 @@ public class ClientState {
                     notifyQueueLock();
                 }
                 else {
-                    log.fine(CLASS_NAME, methodName, "634", null);
+          // log.fine(CLASS_NAME, methodName, "634", null);
                     nextPingTime = Math.max(1, getKeepAlive() - (time - lastOutboundActivity));
                 }
             }
             //@TRACE 624=Schedule next ping at {0}                                                                                                                                                                                
-            log.fine(CLASS_NAME, methodName,"624", new Object[]{new Long(nextPingTime)});
+      // log.fine(CLASS_NAME, methodName,"624", new Object[]{new
+      // Long(nextPingTime)});
             pingSender.schedule(nextPingTime);
 		}
 		
@@ -757,12 +775,12 @@ public class ClientState {
 					(pendingFlows.isEmpty() && actualInFlight >= this.maxInflight)) {
 					try {
 						//@TRACE 644=wait for new work or for space in the inflight window 
-						log.fine(CLASS_NAME,methodName, "644");						
+            // log.fine(CLASS_NAME,methodName, "644");
  
 						queueLock.wait();
 						
 						//@TRACE 647=new work or ping arrived 
-						log.fine(CLASS_NAME,methodName, "647");
+            // log.fine(CLASS_NAME,methodName, "647");
 					} catch (InterruptedException e) {
 					}
 				}
@@ -773,7 +791,7 @@ public class ClientState {
 				if (!connected && 
 						(pendingFlows.isEmpty() || !((MqttWireMessage)pendingFlows.elementAt(0) instanceof MqttConnect))) {
 					//@TRACE 621=no outstanding flows and not connected
-					log.fine(CLASS_NAME,methodName,"621");
+          // log.fine(CLASS_NAME,methodName,"621");
 					
 					return null;
 				}
@@ -792,7 +810,8 @@ public class ClientState {
 						inFlightPubRels++;
 
 						//@TRACE 617=+1 inflightpubrels={0}
-						log.fine(CLASS_NAME,methodName,"617", new Object[]{new Integer(inFlightPubRels)});
+            // log.fine(CLASS_NAME,methodName,"617", new Object[]{new
+            // Integer(inFlightPubRels)});
 					}
 		
 					checkQuiesceLock();
@@ -808,10 +827,11 @@ public class ClientState {
 						actualInFlight++;
 	
 						//@TRACE 623=+1 actualInFlight={0}
-						log.fine(CLASS_NAME,methodName,"623",new Object[]{new Integer(actualInFlight)});
+            // log.fine(CLASS_NAME,methodName,"623",new Object[]{new
+            // Integer(actualInFlight)});
 					} else {
 						//@TRACE 622=inflight window full
-						log.fine(CLASS_NAME,methodName,"622");				
+            // log.fine(CLASS_NAME,methodName,"622");
 					}
 				}			
 			}
@@ -829,8 +849,8 @@ public class ClientState {
         	this.lastOutboundActivity = System.currentTimeMillis();
         }
         // @TRACE 643=sent bytes count={0}                                                                                                                                                                                            
-        log.fine(CLASS_NAME, methodName, "643", new Object[] {
-        		 new Integer(sentBytesCount) });
+    // log.fine(CLASS_NAME, methodName, "643", new Object[] {
+    // new Integer(sentBytesCount) });
     }
 
 	
@@ -843,7 +863,7 @@ public class ClientState {
 		
 		this.lastOutboundActivity = System.currentTimeMillis();
 		//@TRACE 625=key={0}
-		log.fine(CLASS_NAME,methodName,"625",new Object[]{message.getKey()});
+    // log.fine(CLASS_NAME,methodName,"625",new Object[]{message.getKey()});
 		
 		MqttToken token = tokenStore.getToken(message);
 		token.internalTok.notifySent();
@@ -855,7 +875,8 @@ public class ClientState {
                 	pingOutstanding++;
                 }
                 //@TRACE 635=ping sent. pingOutstanding: {0}                                                                                                                                                                  
-                log.fine(CLASS_NAME,methodName,"635",new Object[]{ new Integer(pingOutstanding)});
+        // log.fine(CLASS_NAME,methodName,"635",new Object[]{ new
+        // Integer(pingOutstanding)});
             }
         }
         else if (message instanceof MqttPublish) {
@@ -877,7 +898,8 @@ public class ClientState {
 		synchronized (queueLock) {
 			actualInFlight--;
 			//@TRACE 646=-1 actualInFlight={0}
-			log.fine(CLASS_NAME,methodName,"646",new Object[]{new Integer(actualInFlight)});
+      // log.fine(CLASS_NAME,methodName,"646",new Object[]{new
+      // Integer(actualInFlight)});
 			
 			if (!checkQuiesceLock()) {
 				queueLock.notifyAll();
@@ -891,7 +913,10 @@ public class ClientState {
 		int tokC = tokenStore.count();
 		if (quiescing && tokC == 0 && pendingFlows.size() == 0 && callback.isQuiesced()) {
 			//@TRACE 626=quiescing={0} actualInFlight={1} pendingFlows={2} inFlightPubRels={3} callbackQuiesce={4} tokens={5}
-			log.fine(CLASS_NAME,methodName,"626",new Object[]{new Boolean(quiescing), new Integer(actualInFlight), new Integer(pendingFlows.size()), new Integer(inFlightPubRels), Boolean.valueOf(callback.isQuiesced()), new Integer(tokC)});
+      // log.fine(CLASS_NAME,methodName,"626",new Object[]{new
+      // Boolean(quiescing), new Integer(actualInFlight), new
+      // Integer(pendingFlows.size()), new Integer(inFlightPubRels),
+      // Boolean.valueOf(callback.isQuiesced()), new Integer(tokC)});
 			synchronized (quiesceLock) {
 				quiesceLock.notifyAll();
 			}
@@ -906,8 +931,8 @@ public class ClientState {
             this.lastInboundActivity = System.currentTimeMillis();
         }
         // @TRACE 630=received bytes count={0}                                                                                                                                                                                        
-        log.fine(CLASS_NAME, methodName, "630", new Object[] {
-                 new Integer(receivedBytesCount) });
+    // log.fine(CLASS_NAME, methodName, "630", new Object[] {
+    // new Integer(receivedBytesCount) });
     }
 
     /**
@@ -921,16 +946,16 @@ public class ClientState {
 		this.lastInboundActivity = System.currentTimeMillis();
 
 		// @TRACE 627=received key={0} message={1}
-		log.fine(CLASS_NAME, methodName, "627", new Object[] {
-				new Integer(ack.getMessageId()), ack });
+    // log.fine(CLASS_NAME, methodName, "627", new Object[] {
+    // new Integer(ack.getMessageId()), ack });
 
 		MqttToken token = tokenStore.getToken(ack);
 		MqttException mex = null;
 
 		if (token == null) {
 			// @TRACE 662=no message found for ack id={0}
-			log.fine(CLASS_NAME, methodName, "662", new Object[] {
-					new Integer(ack.getMessageId())});
+      // log.fine(CLASS_NAME, methodName, "662", new Object[] {
+      // new Integer(ack.getMessageId())});
 		} else if (ack instanceof MqttPubRec) {
 			// Complete the QoS 2 flow. Unlike all other
 			// flows, QoS is a 2 phase flow. The second phase sends a
@@ -953,7 +978,8 @@ public class ClientState {
                 }
             }
             //@TRACE 636=ping response received. pingOutstanding: {0}                                                                                                                                                     
-            log.fine(CLASS_NAME,methodName,"636",new Object[]{ new Integer(pingOutstanding)});
+      // log.fine(CLASS_NAME,methodName,"636",new Object[]{ new
+      // Integer(pingOutstanding)});
 		} else if (ack instanceof MqttConnack) {
 			int rc = ((MqttConnack) ack).getReturnCode();
 			if (rc == 0) {
@@ -1003,8 +1029,8 @@ public class ClientState {
 		this.lastInboundActivity = System.currentTimeMillis();
 
 		// @TRACE 651=received key={0} message={1}
-		log.fine(CLASS_NAME, methodName, "651", new Object[] {
-				new Integer(message.getMessageId()), message });
+    // log.fine(CLASS_NAME, methodName, "651", new Object[] {
+    // new Integer(message.getMessageId()), message });
 		
 		if (!quiescing) {
 			if (message instanceof MqttPublish) {
@@ -1062,8 +1088,8 @@ public class ClientState {
 		if (message != null && message instanceof MqttAck) {
 			
 			// @TRACE 629=received key={0} token={1} message={2}
-			log.fine(CLASS_NAME, methodName, "629", new Object[] {
-					 new Integer(message.getMessageId()), token, message });
+      // log.fine(CLASS_NAME, methodName, "629", new Object[] {
+      // new Integer(message.getMessageId()), token, message });
 
 			MqttAck ack = (MqttAck) message;
 
@@ -1077,8 +1103,8 @@ public class ClientState {
 				releaseMessageId(message.getMessageId());
 				tokenStore.removeToken(message);
 				// @TRACE 650=removed Qos 1 publish. key={0}
-				log.fine(CLASS_NAME, methodName, "650",
-						new Object[] { new Integer(ack.getMessageId()) });
+        // log.fine(CLASS_NAME, methodName, "650",
+        // new Object[] { new Integer(ack.getMessageId()) });
 			} else if (ack instanceof MqttPubComp) {
 				// QoS 2 - user notified now remove from persistence...
 				persistence.remove(getSendPersistenceKey(message));
@@ -1092,9 +1118,9 @@ public class ClientState {
 				tokenStore.removeToken(message);
 
 				// @TRACE 645=removed QoS 2 publish/pubrel. key={0}, -1 inFlightPubRels={1}
-				log.fine(CLASS_NAME, methodName, "645", new Object[] {
-						new Integer(ack.getMessageId()),
-						new Integer(inFlightPubRels) });
+        // log.fine(CLASS_NAME, methodName, "645", new Object[] {
+        // new Integer(ack.getMessageId()),
+        // new Integer(inFlightPubRels) });
 			}
 
 			checkQuiesceLock();
@@ -1110,14 +1136,16 @@ public class ClientState {
 		// Let the user know an async operation has completed and then remove the token
 		if (ack != null && ack instanceof MqttAck && !(ack instanceof MqttPubRec)) {
 			//@TRACE 648=key{0}, msg={1}, excep={2}
-			log.fine(CLASS_NAME,methodName, "648", new Object [] {token.internalTok.getKey(), ack, ex});
+      // log.fine(CLASS_NAME,methodName, "648", new Object []
+      // {token.internalTok.getKey(), ack, ex});
 			callback.asyncOperationComplete(token);
 		}
 		// There are cases where there is no ack as the operation failed before 
 		// an ack was received 
 		if (ack == null ) {
 			//@TRACE 649=key={0},excep={1}
-			log.fine(CLASS_NAME,methodName, "649", new Object [] { token.internalTok.getKey(), ex});
+      // log.fine(CLASS_NAME,methodName, "649", new Object [] {
+      // token.internalTok.getKey(), ex});
 			callback.asyncOperationComplete(token);
 		}
 	}
@@ -1128,7 +1156,7 @@ public class ClientState {
 	public void connected() {
 		final String methodName = "connected";
 		//@TRACE 631=connected
-		log.fine(CLASS_NAME, methodName, "631");
+    // log.fine(CLASS_NAME, methodName, "631");
 		this.connected = true;
 		
 		pingSender.start(); //Start ping thread when client connected to server.
@@ -1146,7 +1174,7 @@ public class ClientState {
 	public Vector resolveOldTokens(MqttException reason) {
 		final String methodName = "resolveOldTokens";
 		//@TRACE 632=reason {0}
-		log.fine(CLASS_NAME,methodName,"632", new Object[] {reason});
+    // log.fine(CLASS_NAME,methodName,"632", new Object[] {reason});
 		
 		// If any outstanding let the user know the reason why it is still
 		// outstanding by putting the reason shutdown is occurring into the 
@@ -1185,7 +1213,7 @@ public class ClientState {
 	public void disconnected(MqttException reason) {
 		final String methodName = "disconnected";
 		//@TRACE 633=disconnected
-		log.fine(CLASS_NAME,methodName,"633", new Object[] {reason});		
+    // log.fine(CLASS_NAME,methodName,"633", new Object[] {reason});
 
 		this.connected = false;
 
@@ -1255,7 +1283,7 @@ public class ClientState {
 		// If the timeout is greater than zero t
 		if (timeout > 0 ) {
 			//@TRACE 637=timeout={0}
-			log.fine(CLASS_NAME,methodName, "637",new Object[]{new Long(timeout)});
+      // log.fine(CLASS_NAME,methodName, "637",new Object[]{new Long(timeout)});
 			synchronized (queueLock) {
 				this.quiescing = true;
 			}
@@ -1271,7 +1299,9 @@ public class ClientState {
 					int tokc = tokenStore.count();
 					if (tokc > 0 || pendingFlows.size() >0 || !callback.isQuiesced()) {
 						//@TRACE 639=wait for outstanding: actualInFlight={0} pendingFlows={1} inFlightPubRels={2} tokens={3}
-						log.fine(CLASS_NAME, methodName,"639", new Object[]{new Integer(actualInFlight), new Integer(pendingFlows.size()), new Integer(inFlightPubRels), new Integer(tokc)});
+            // log.fine(CLASS_NAME, methodName,"639", new Object[]{new
+            // Integer(actualInFlight), new Integer(pendingFlows.size()), new
+            // Integer(inFlightPubRels), new Integer(tokc)});
 
 						// wait for outstanding in flight messages to complete and
 						// any pending flows to complete
@@ -1292,7 +1322,7 @@ public class ClientState {
 				actualInFlight = 0;
 			}
 			//@TRACE 640=finished
-			log.fine(CLASS_NAME, methodName, "640");
+      // log.fine(CLASS_NAME, methodName, "640");
 		}
 	}
 
@@ -1300,7 +1330,7 @@ public class ClientState {
 		final String methodName = "notifyQueueLock";
 		synchronized (queueLock) {
 			//@TRACE 638=notifying queueLock holders
-			log.fine(CLASS_NAME,methodName,"638");
+      // log.fine(CLASS_NAME,methodName,"638");
 			queueLock.notifyAll();
 		}
 	}
@@ -1309,7 +1339,8 @@ public class ClientState {
 		final String methodName = "deliveryComplete";
 
 		//@TRACE 641=remove publish from persistence. key={0}
-		log.fine(CLASS_NAME,methodName,"641", new Object[]{new Integer(message.getMessageId())});
+    // log.fine(CLASS_NAME,methodName,"641", new Object[]{new
+    // Integer(message.getMessageId())});
 		
 		persistence.remove(getReceivedPersistenceKey(message));
 		inboundQoS2.remove(new Integer(message.getMessageId()));
@@ -1319,7 +1350,8 @@ public class ClientState {
 		final String methodName = "deliveryComplete";
 
 		//@TRACE 641=remove publish from persistence. key={0}
-		log.fine(CLASS_NAME,methodName,"641", new Object[]{new Integer(messageId)});
+    // log.fine(CLASS_NAME,methodName,"641", new Object[]{new
+    // Integer(messageId)});
 		
 		persistence.remove(getReceivedPersistenceKey(messageId));
 		inboundQoS2.remove(new Integer(messageId));
